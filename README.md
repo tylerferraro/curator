@@ -28,14 +28,14 @@ require 'curator'
 epub_file = '/Users/tylerferraro/books/wizard-of-oz.epub'
 book = Curator.curate(epub_file)
 puts book.info
-```
 
-> Title: Wizard of Oz
-> Authors: L. Frank Baum
-> Publication: 1996-02-01
-> Subjects: Fantasy literature, Magic -- Juvenile fiction, ...
-> Language: English
-> Rights: Public domain in the USA
+#=> Title: Wizard of Oz
+#   Authors: L. Frank Baum
+#   Publication: 1996-02-01
+#   Subjects: Fantasy literature, Magic -- Juvenile fiction, ...
+#   Language: English
+#   Rights: Public domain in the USA
+```
 
 ## Development
 

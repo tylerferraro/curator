@@ -1,4 +1,4 @@
-require "curator/version"
+require 'curator/version'
 
 module Curator
   # Your code goes here...

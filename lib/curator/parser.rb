@@ -16,9 +16,26 @@ module Curator
                         .value
   
           xml = read_file(rootfile)
+          metadata = xml.css('metadata').children
+          metadata.each do |xml_entry|
+            case xml_entry.name
+            when 'creator'
+              book.authors << xml_entry.content
+            when 'date' && xml_entry.attributes['event'].value == 'publication'
+              book.publication = xml_entry.content 
+            when 'language'
+              book.language = xml_entry.content
+            when 'rights'
+              book.rights << xml_entry.content
+            when 'subject'
+              book.subjects << xml_entry.content
+            when 'title'
+              book.title = xml_entry.content 
+            end
+          end
         end
   
-        return book
+        book
       end
 
       private
@@ -27,7 +44,7 @@ module Curator
         entry = zipfile.find_entry(entry_name)
         raise StandardError.new("Could not parse #{file}") unless entry
   
-        content = entry.get_input_stream { |is| is.read }
+        content = entry.get_input_stream(&:read)
         Nokogiri::XML(content)
       end
     end

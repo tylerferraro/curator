@@ -4,24 +4,31 @@ require 'zip'
 module Curator
   class Parser
     class << self
+      CONTAINER_FILE = 'META-INF/container.xml'
+
       def parse(file)
         book = Book.new
 
         Zip::File.open(file) do |zipfile|
-          entry = zipfile.find_entry(CONTAINER_FILE)
-          raise StandardError.new("Could not parse #{file}") unless entry
-  
-          container = entry.get_input_stream { |is| is.read }
-          xml = Nokogiri::XML(container)
+          xml = read_file(CONTAINER_FILE)
           rootfile = xml.at_css('rootfile')
-          root = rootfile.attributes['full-path'].value
+                        .attributes['full-path']
+                        .value
   
-          entry = zipfile.find_entry(root)
-          content = entry.get_input_stream { |is| is.read }
-          xml = Nokogiri::XML(content)
+          xml = read_file(rootfile)
         end
   
         return book
+      end
+
+      private
+
+      def read_file(entry_name)
+        entry = zipfile.find_entry(entry_name)
+        raise StandardError.new("Could not parse #{file}") unless entry
+  
+        content = entry.get_input_stream { |is| is.read }
+        Nokogiri::XML(content)
       end
     end
   end

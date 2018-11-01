@@ -1,8 +1,6 @@
 # Curator
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/curator`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Curator is an ePub parser library that wraps ebooks in a nice DSL.
 
 ## Installation
 
@@ -22,7 +20,22 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Curate an epub file into a `Book` ruby object
+
+```ruby
+require 'curator'
+
+epub_file = '/Users/tylerferraro/books/wizard-of-oz.epub'
+book = Curator.curate(epub_file)
+puts book.info
+```
+
+> Title: Wizard of Oz
+> Authors: L. Frank Baum
+> Publication: 1996-02-01
+> Subjects: Fantasy literature, Magic -- Juvenile fiction, ...
+> Language: English
+> Rights: Public domain in the USA
 
 ## Development
 
@@ -32,7 +45,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/curator.
+Bug reports and pull requests are welcome on GitHub at https://github.com/tylerferraro/curator.
 
 ## License
 

@@ -11,6 +11,23 @@ module Curator
       @rights = attrs[:rights] || 'Unknown'
     end
 
+    def set_metadata(name, value)
+      case name
+      when 'creator'
+        authors << value
+      when 'date' && node.attributes['event'].value == 'publication'
+        publication = value
+      when 'language'
+        language = value
+      when 'rights'
+        rights = value
+      when 'subject'
+        subjects << value
+      when 'title'
+        title = value
+      end
+    end
+
     def info
       """
       Title: #{title}

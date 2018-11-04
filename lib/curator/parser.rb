@@ -12,12 +12,14 @@ module Curator
         Zip::File.open(file) do |zipfile|
           xml = read_rootfile(zipfile)
 
-          metadata = xml.find_node('metadata')
-          metadata.children.each { |node| read_metadata(node, book) }
+          metadata = xml.at_css('metadata')
+          metadata.children.each do |node|
+            book.set_metadata(node.name, node.content)
+          end
 
           manifest = read_manifest(xml)
-          spine = xml.find_node('spine')
-          spine_id = spine.attributes('toc')
+          spine = xml.at_css('spine')
+          spine_id = spine.attributes['toc'].value
         end
   
         book
@@ -27,44 +29,27 @@ module Curator
 
       def read_root_file(zipfile)
         xml = read_file(zipfire, CONTAINER_FILE)
-        rootfile = xml.find_node('rootfile').attributes('full-path')
+        rootfile = xml.at_css('rootfile').attributes['full-path'].value
   
         read_file(zipfile, rootfile)
       end
 
       def read_file(zipfile, entry_name)
         entry = zipfile.find_entry(entry_name)
-        raise StandardError.new("Could not parse #{file}") unless entry
+        raise StandardError.new("Could not parse #{entry_name}") unless entry
   
         content = entry.get_input_stream(&:read)
-        XML.new(content)
-      end
-
-      def read_metadata(node, book)
-        case node.name
-        when 'creator'
-          book.authors << node.content
-        when 'date' && node.attributes('event') == 'publication'
-          book.publication = node.content 
-        when 'language'
-          book.language = node.content
-        when 'rights'
-          book.rights << node.content
-        when 'subject'
-          book.subjects << node.content
-        when 'title'
-          book.title = node.content 
-        end
+        Nokogiri::XML(content) { |config| config.noblanks }
       end
 
       def read_manifest(xml, book)
         manifest = Manifest.new
-        identifier = xml.find_node('package').attributes('unique-identifier')
+        identifier = xml.at_css('package').attributes['unique-identifier'].value
 
         xml.find_node('manifest').find_children('item').each do |node|
-          id = node.attributes(identifier)
-          link = node.attributes('href')
-          type = node.attributes('media-type')
+          id = node.attributes[identifier].value
+          link = node.attributes['href'].value
+          type = node.attributes['media-type'].value
 
           manifest.add_entry(id: id, link: link, type: type)
         end

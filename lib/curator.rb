@@ -1,4 +1,5 @@
 require 'curator/book'
+require 'curator/manifest'
 require 'curator/parser'
 require 'curator/version'
 
